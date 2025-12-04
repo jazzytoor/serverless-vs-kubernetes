@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Serverless vs Kubernetes Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f7f7f7;
+        }
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 40px;
+            color: #374151;
+        }
+        button {
+            padding: 10px 18px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        input {
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 200px;
+        }
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Serverless vs Kubernetes Demo</h1>
+    <p>Compare the same app running on two architectures</p>
+</header>
+
+<div class="container">
+
+    <p>Using API Base URL:</p>
+    <pre id="api-url"></pre>
+
+    <script>
+        const API_BASE_URL = "API_URL_HERE";
+        document.getElementById("api-url").innerText = API_BASE_URL;
+    </script>
+
+    <!-- Hello World -->
+    <h2>/</h2>
+    <button onclick="callRoot()">Call /</button>
+    <pre id="root-output"></pre>
+
+    <!-- /time -->
+    <h2>/time</h2>
+    <button onclick="callTime()">Call /time</button>
+    <pre id="time-output"></pre>
+
+    <!-- /visits -->
+    <h2>/visits</h2>
+    <button onclick="callVisits()">Call /visits</button>
+    <pre id="visits-output"></pre>
+
+    <!-- /home/{name} -->
+    <h2>/home/{name}</h2>
+    <input id="name-input" type="text" placeholder="Enter your name" />
+    <button onclick="callHome()">Call /home/{name}</button>
+    <pre id="home-output"></pre>
+</div>
+
+<script>
+async function callRoot() {
+    const res = await fetch(`${API_BASE_URL}/`);
+    document.getElementById("root-output").innerText = JSON.stringify(await res.json(), null, 2);
+}
+
+async function callTime() {
+    const res = await fetch(`${API_BASE_URL}/time`);
+    document.getElementById("time-output").innerText = JSON.stringify(await res.json(), null, 2);
+}
+
+async function callVisits() {
+    const res = await fetch(`${API_BASE_URL}/visits`);
+    document.getElementById("visits-output").innerText = JSON.stringify(await res.json(), null, 2);
+}
+
+async function callHome() {
+    const name = document.getElementById("name-input").value || "anonymous";
+    const res = await fetch(`${API_BASE_URL}/home/${name}`);
+    document.getElementById("home-output").innerText = JSON.stringify(await res.json(), null, 2);
+}
+</script>
+
+</body>
+</html>
