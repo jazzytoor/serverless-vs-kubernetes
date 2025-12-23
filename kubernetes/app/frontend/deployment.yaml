@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: svc-app
+  name: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: svc-app
+      app: frontend
   template:
     metadata:
       labels:
-        app: svc-app
+        app: frontend
     spec:
       containers:
         - name: app
-          image: xxx.dkr.ecr.xxx.amazonaws.com/dualstack:latest
+          image: 052275556902.dkr.ecr.eu-west-2.amazonaws.com/dualstack:frontend
           ports:
             - containerPort: 8000
       imagePullSecrets:
