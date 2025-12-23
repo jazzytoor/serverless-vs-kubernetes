@@ -17,3 +17,5 @@ spec:
           image: 052275556902.dkr.ecr.eu-west-2.amazonaws.com/dualstack:latest
           ports:
             - containerPort: 8000
+      imagePullSecrets:
+        - name: myawscred
