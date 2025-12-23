@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  labels:
+    app: frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -13,9 +15,23 @@ spec:
         app: frontend
     spec:
       containers:
-        - name: app
+        - name: frontend
           image: 052275556902.dkr.ecr.eu-west-2.amazonaws.com/dualstack:frontend
+          imagePullPolicy: Always
           ports:
-            - containerPort: 8000
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20
       imagePullSecrets:
         - name: myawscred
+
