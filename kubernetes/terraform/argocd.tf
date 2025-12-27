@@ -1,25 +1,27 @@
-resource "aws_eks_capability" "default" {
-  cluster_name              = module.eks.cluster_name
-  capability_name           = "argocd"
-  type                      = "ARGOCD"
-  role_arn                  = module.argocd.arn
-  delete_propagation_policy = "RETAIN"
+resource "helm_release" "argocd" {
+  name = "argocd"
 
-  configuration {
-    argo_cd {
-      aws_idc {
-        idc_instance_arn = local.sso_instance_arn
-      }
-      namespace = "argocd"
-      rbac_role_mapping {
-        role = "ADMIN"
-        identity {
-          id   = aws_identitystore_group.default.group_id
-          type = "SSO_GROUP"
-        }
-      }
-    }
-  }
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  namespace        = "argocd"
+  create_namespace = true
+  version          = "8.5.8"
 
-  tags = local.default_tags
+  values = [file("argocd.yaml")]
+
+  depends_on = [module.eks]
+}
+
+resource "helm_release" "updater" {
+  name = "updater"
+
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argocd-image-updater"
+  namespace        = "argocd"
+  create_namespace = true
+  version          = "0.12.3"
+
+  values = [file("argocd-image-updater.yaml")]
+
+  depends_on = [helm_release.argocd]
 }
