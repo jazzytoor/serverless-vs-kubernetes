@@ -24,23 +24,6 @@ module "ecr" {
   tags = local.default_tags
 }
 
-module "irsa" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-
-  name = "AmazonEKSLoadBalancerControllerRole"
-
-  attach_load_balancer_controller_policy = true
-
-  oidc_providers = {
-    eks = {
-      provider_arn = module.eks.oidc_provider_arn
-      namespace_service_accounts = [
-        "kube-system:aws-load-balancer-controller"
-      ]
-    }
-  }
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
@@ -79,8 +62,9 @@ module "eks" {
       max_size     = 3
       desired_size = 1
 
-      instance_types = ["t3.small"]
-      capacity_type  = "ON_DEMAND"
+      attach_cluster_primary_security_group = true
+      instance_types                        = ["t3.small"]
+      capacity_type                         = "ON_DEMAND"
 
       subnet_ids = module.vpc.private_subnets
 
@@ -103,14 +87,4 @@ module "eks" {
   }
 
   tags = local.default_tags
-}
-
-resource "aws_eks_access_policy_association" "argocd" {
-  cluster_name  = module.eks.cluster_name
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn = module.argocd.arn
-
-  access_scope {
-    type = "cluster"
-  }
 }

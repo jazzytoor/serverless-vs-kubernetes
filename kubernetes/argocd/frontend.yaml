@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: frontend
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: 052275556902.dkr.ecr.eu-west-2.amazonaws.com/dualstack
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/update-strategy: newest-build
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   project: default
   source:
@@ -10,7 +16,7 @@ spec:
     targetRevision: main
     path: kubernetes/app/frontend
   destination:
-    server: arn:aws:eks:eu-west-2:052275556902:cluster/dualstack
+    server: https://kubernetes.default.svc
     namespace: default
   syncPolicy:
     automated:
