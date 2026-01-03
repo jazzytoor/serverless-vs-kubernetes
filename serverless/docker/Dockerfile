@@ -8,7 +8,7 @@ RUN : \
     :
 
 WORKDIR ${LAMBDA_TASK_ROOT}
-COPY /app ${LAMBDA_TASK_ROOT}
+COPY app ${LAMBDA_TASK_ROOT}
 
 RUN : \
     && python3.9 -m pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}" \

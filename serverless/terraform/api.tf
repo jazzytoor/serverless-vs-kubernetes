@@ -1,5 +1,6 @@
 module "api" {
-  source = "terraform-aws-modules/apigateway-v2/aws"
+  source  = "terraform-aws-modules/apigateway-v2/aws"
+  version = "~> 6.0"
 
   name               = var.service
   protocol_type      = "HTTP"

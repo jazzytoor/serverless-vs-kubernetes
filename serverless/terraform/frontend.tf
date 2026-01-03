@@ -29,7 +29,8 @@ data "aws_iam_policy_document" "s3_policy" {
 }
 
 module "object" {
-  source = "terraform-aws-modules/s3-bucket/aws//modules/object"
+  source  = "terraform-aws-modules/s3-bucket/aws//modules/object"
+  version = "~> 5.0"
 
   bucket       = module.s3.s3_bucket_id
   key          = "index.html"
@@ -42,7 +43,9 @@ module "object" {
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
+
+  validation_method = "DNS"
 
   domain_name               = var.domain
   zone_id                   = data.aws_route53_zone.this.id
@@ -52,7 +55,8 @@ module "acm" {
 }
 
 module "cloudfront" {
-  source = "terraform-aws-modules/cloudfront/aws"
+  source  = "terraform-aws-modules/cloudfront/aws"
+  version = "~> 6.0"
 
   aliases = ["${local.subdomain}.${var.domain}"]
 
@@ -91,19 +95,20 @@ module "cloudfront" {
 }
 
 module "records" {
-  source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "~> 5.0"
+  source  = "terraform-aws-modules/route53/aws"
+  version = "~> 6.0"
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  create_zone = false
+  name        = var.domain
 
-  records = [
-    {
+  records = {
+    cloudfront = {
       name = local.subdomain
       type = "A"
       alias = {
         name    = module.cloudfront.cloudfront_distribution_domain_name
         zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
       }
-    },
-  ]
+    }
+  }
 }
