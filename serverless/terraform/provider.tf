@@ -1,11 +1,11 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
 provider "docker" {
   host = var.host
   registry_auth {
-    address  = format("%v.dkr.ecr.%v.amazonaws.com", data.aws_caller_identity.this.account_id, data.aws_region.current.region)
+    address  = format("%v.dkr.ecr.%v.amazonaws.com", data.aws_caller_identity.this.account_id, var.region)
     username = data.aws_ecr_authorization_token.token.user_name
     password = data.aws_ecr_authorization_token.token.password
   }

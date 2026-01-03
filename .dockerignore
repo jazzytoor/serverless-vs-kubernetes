@@ -1,0 +1,8 @@
+README.md
+.gitignore
+.git
+.github
+__pycache__
+*.pyc
+.env
+serverless/terraform/

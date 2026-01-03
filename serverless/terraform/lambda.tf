@@ -1,5 +1,6 @@
 module "image_build" {
-  source = "terraform-aws-modules/lambda/aws//modules/docker-build"
+  source  = "terraform-aws-modules/lambda/aws//modules/docker-build"
+  version = "~> 8.0"
 
   create_ecr_repo = true
   ecr_repo        = var.service
@@ -7,11 +8,14 @@ module "image_build" {
   use_image_tag = true
   image_tag     = "2.0"
 
-  source_path = "../../app"
+  source_path      = "${path.root}/../.."
+  docker_file_path = "${path.root}/../docker/Dockerfile"
+  platform         = "linux/arm64"
 }
 
 module "app" {
-  source = "terraform-aws-modules/lambda/aws"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "~> 8.0"
 
   function_name  = var.service
   handler        = "main.lambda_handler"
