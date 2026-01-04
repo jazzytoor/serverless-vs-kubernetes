@@ -1,17 +1,18 @@
 ## Usage
-1. Copy the template variables file:
+1. Update yaml files by replacing <AWS_ACCOUNT_ID> with your AWS Account ID.
+2. Copy the template variables file:
 
     ```bash
     cp kubernetes/terraform/variables.auto.tfvars.tmpl kubernetes/terraform/variables.auto.tfvars
     ```
-2. Update the variables in variables.auto.tfvars:
+3. Update the variables in variables.auto.tfvars:
 
     | Variable  | Description                       | Type   |
     | --------- | --------------------------------- | ------ |
     | `region`  | AWS region (e.g., `eu-west-2`)    | String |
     | `service` | Service name / project identifier | String |
     | `host`    | Docker daemon address             | String |
-3. Run the following Terraform commands to deploy infrastructure
+4. Run the following Terraform commands to deploy infrastructure
 
     ```bash
     cd kubernetes/terraform
@@ -20,7 +21,7 @@
     terraform plan
     terraform apply -auto-approve
     ```
-2. Once Argocd is deployed to the EKS via the Helm chart we need to get the password and port forward the server in order to access the console.
+5. Once Argocd is deployed to the EKS via the Helm chart we need to get the password and port forward the server in order to access the console.
 
     ```bash
     # Get password for admin user account
@@ -39,7 +40,7 @@
 
   ```bash
   kubectl apply -f kubernetes/argocd/frontend.yaml
-  kubectl apply -f kubernetes/argocd/backend.yaml 
+  kubectl apply -f kubernetes/argocd/backend.yaml
   ```
 
 ### Locally

@@ -4,7 +4,7 @@ metadata:
   name: backend
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: 052275556902.dkr.ecr.eu-west-2.amazonaws.com/dualstack
+    argocd-image-updater.argoproj.io/image-list: <AWS_ACCOUNT_ID>.dkr.ecr.eu-west-2.amazonaws.com/dualstack
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/update-strategy: newest-build
   finalizers:

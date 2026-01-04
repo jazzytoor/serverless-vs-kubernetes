@@ -27,7 +27,9 @@ repos:
       - id: terraform-fmt
         name: terraform fmt
         entry: terraform fmt
-        args: [terraform]
+        args:
+          - -recursive
+          - kubernetes/terraform
+          - serverless/terraform
         language: system
         pass_filenames: false
-        types: [file]
