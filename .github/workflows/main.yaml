@@ -1,11 +1,4 @@
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-      - feat/actions
   workflow_dispatch:
     inputs:
       operation:
@@ -17,7 +10,6 @@ on:
           - destroy
       stack:
         required: true
-        default: kubernetes
         type: choice
         options:
           - kubernetes
@@ -33,8 +25,8 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kubernetes
-          path: kubernetes
+          name: ${{ github.event.inputs.stack }}
+          path: ${{ github.event.inputs.stack }}
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
@@ -61,8 +53,8 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v5
         with:
-          name: kubernetes
-          path: kubernetes
+          name: ${{ github.event.inputs.stack }}
+          path: ${{ github.event.inputs.stack }}
 
       - name: Download Artifact
         uses: actions/download-artifact@v5
@@ -107,7 +99,7 @@ jobs:
             [
               ${{ toJSON(vars) }},
               ${{ toJSON(secrets) }},
-              { "SERVICE": "dualstack-kubernetes" },
+              { "SERVICE": "dualstack-${{ github.event.inputs.stack }}" },
               { "BACKEND": "${{ env.BACKEND }}" }
             ]
           token-pattern: custom
@@ -115,26 +107,26 @@ jobs:
           token-suffix: '}'
           log-level: debug
           no-telemetry: true
-          root: kubernetes/terraform
+          root: ${{ github.event.inputs.stack }}/terraform
 
       - name: Terraform Init
         run: terraform init
-        working-directory: kubernetes/terraform
+        working-directory: ${{ github.event.inputs.stack }}/terraform
 
       - name: Terraform Plan
         run: terraform plan
-        working-directory: kubernetes/terraform
+        working-directory: ${{ github.event.inputs.stack }}/terraform
 
-      # - name: Terraform Apply
-      #   if: |
-      #     github.event_name != 'workflow_dispatch' ||
-      #     github.event.inputs.operation == 'deploy'
-      #   run: terraform apply -auto-approve
-      #   working-directory: kubernetes/terraform
+      - name: Terraform Apply
+        if: |
+          github.event_name != 'workflow_dispatch' ||
+          github.event.inputs.operation == 'deploy'
+        run: terraform apply -auto-approve
+        working-directory: ${{ github.event.inputs.stack }}/terraform
 
-      # - name: Terraform Destroy
-      #   if: |
-      #     github.event_name == 'workflow_dispatch' &&
-      #     github.event.inputs.operation == 'destroy'
-      #   run: terraform destroy -auto-approve
-      #   working-directory: kubernetes/terraform
+      - name: Terraform Destroy
+        if: |
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.operation == 'destroy'
+        run: terraform destroy -auto-approve
+        working-directory: ${{ github.event.inputs.stack }}/terraform
